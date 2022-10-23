@@ -29,8 +29,8 @@ const App = () => {
   const [vote, setVote] = useState(0)
   const header = "Anecdote of the day"
   const header2 = "Anecdote with most votes"
-    var largestIndex = 0
-    var largest = 0
+  var largestIndex = 0
+  var largest = 0
 
     for(let i = 0; i<anecdotes.length; i++) {
       if(votes[i]>largest) {
