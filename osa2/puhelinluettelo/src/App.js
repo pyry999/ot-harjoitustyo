@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react'
-import axios from 'axios'
+import personService from './services/persons'
+//import axios from 'axios'
 
 const Filter = (props) => {
   return (
@@ -25,9 +26,20 @@ const Person = (props) => {
 
 const Button = (props) => {
   return (
-    <div>
-          <button type="submit">add</button>
-        </div>
+    <div><button type="submit">add</button></div>
+        
+  )
+}
+
+const Notification = ({message}) => {
+  if(message===null) {
+    return null
+  }
+
+  return (
+    <div className="message">
+      {message}
+    </div>
   )
 }
 
@@ -42,33 +54,33 @@ const Form = (props) => {
   )
 }
 
+
+
 const Persons = (props) => {
   return (
     <div>
   {props.showAll.map(person => 
-    <div key={person.name}> {person.name} {person.number}</div>
+    <div key={person.name}> {person.name} {person.number} <button onClick={()=>props.removePerson(person.id)}>delete</button></div>
     )}
   </div>
   )
 }
-
 
 const App = () => {
   const [persons, setPersons] = useState([]) 
   const [newName, setNewName] = useState('')
   const [newNumber, setNewNumber] = useState('')
   const [showAll, setShowAll] = useState(persons)
+  const [message, setMessage] = useState(null)
 
   useEffect(() => {
-    axios
-      .get('http://localhost:3001/persons')
+    personService
+      .getAll()
       .then(response => {
         setPersons(response.data)
         setShowAll(response.data)
       })
   }, [])
-
-
 
   const addPerson = (event) => {
     event.preventDefault()
@@ -77,13 +89,55 @@ const App = () => {
       number: newNumber,
     }
     if(!persons.map(person => person.name).includes(newName)) {
-    setPersons(persons.concat(personObject))
-    setShowAll(persons.concat(personObject))
+    personService
+      .create(personObject)
+      .then(response => {
+    setPersons(persons.concat(response.data))
+    setShowAll(persons.concat(response.data))
+    setMessage(`Added ${newName}`)
+    setTimeout(() => {
+      setMessage(null)
+    }, 5000)
     setNewName('')
     setNewNumber('')
+      })
+    
     }
     else {
-      alert(`${newName} is already added`)
+      if(window.confirm(`${newName} is already added, replace the old number?`)) {
+        const p = persons.find(n => n.name === newName)
+        const changed = {...p, number: newNumber}
+
+        personService
+          .update(p.id, changed)
+          .then(response => {
+            setPersons(persons.map(person => person.id !== p.id ? person : response.data))
+            setShowAll(persons.map(person => person.id !== p.id ? person : response.data))
+            setNewName('')
+            setNewNumber('')
+          })
+      }
+    }
+  }
+
+  const removePerson = (id) => {
+    if(window.confirm("haluukko poistaa")) {
+    setPersons(persons.filter(n => n.id !== id))
+    setShowAll(persons.filter(n => n.id !== id))
+    setMessage(`removed ${persons.find(n=> n.id===id).name}`)
+    personService
+      .rem(id).then(pers => {
+        setPersons(persons.filter(n => n.id !== pers.id))
+        setShowAll(persons.filter(n => n.id !== pers.id))
+        setMessage(`removed ${persons.find(n=> n.id===pers.id).name}`)
+      })
+      .catch(error => {
+        alert('already deleted')
+      })
+    
+    setTimeout(() => {
+      setMessage(null)
+    }, 5000)
     }
   }
 
@@ -104,10 +158,11 @@ const App = () => {
 
   return (
     <div>
-      <h2>Phonebook</h2>
+      <h1>Phonebook</h1>
+      <Notification message={message}/>
       <Form addPerson={addPerson} handleShown={handleShown} newName={newName} handleNameChange={handleNameChange} newNumber={newNumber} handleNumberChange={handleNumberChange}/>
       <h2>Numbers</h2>
-      <Persons showAll={showAll} />
+      <Persons showAll={showAll} removePerson={removePerson} />
     </div>
   )
 
