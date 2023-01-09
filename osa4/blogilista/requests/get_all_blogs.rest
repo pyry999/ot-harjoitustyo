@@ -1,13 +1,13 @@
 POST http://localhost:3003/api/blogs
 Content-Type: application/json
-Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6Ik1hcmtvIiwiaWQiOiI2M2I1N2RiN2FkNjViOWIwMzA4NGQ0MDYiLCJpYXQiOjE2NzI4Mzg1ODh9.E8mNRApKuwZMj-rPbSquRbli4bUa3FWVrdHBawAeV44
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6IlBldHRlcmkiLCJpZCI6IjYzYjZlY2NhNjk1YTllMGM3MzM5NGM1ZSIsImlhdCI6MTY3MjkzMjU4OX0.j5cxzvni0qcJ66xDvG-VD4qHZN9chxzJADw5LoZSSx0
 
 {
-    "title": "petterimaa",
-    "author": "Liisa Petteri",
+    "title": "LISÄ",
+    "author": "KALLE",
     "url": "www.jjjw",
-    "likes": 0,
-    "userId": "63b56cc66ddd0c450d35e22c"
+    "likes": 10,
+    "userId": "63b6ecca695a9e0c73394c5e"
 }
 
 ###
@@ -16,7 +16,7 @@ POST http://localhost:3003/api/login
 Content-Type: application/json
 
 {
-    "username": "Marko",
+    "username": "Petteri",
     "password": "lolli"
 }
 
@@ -26,11 +26,18 @@ POST http://localhost:3003/api/users
 Content-Type: application/json
 
 {
-    "username": "Marko",
+    "username": "Petteri",
     "password": "lolli"
 }
 
 ###
 
-DELETE http://localhost:3003/api/blogs/63b4918c0299f86d682dadc7
+PUT http://localhost:3003/api/blogs/63b6ed0b695a9e0c73394c63
 Content-Type: application/json
+
+{
+    "title": "petterimaa",
+"url": "www.jjjw",
+"author": "Liisaeri",
+"likes": 99,
+}

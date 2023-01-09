@@ -161,6 +161,23 @@ test('req without token', async () => {
         .expect(401)
 })
 
+test('a blog can be edited', async () => {
+    const aBlogAtStart = (await helper.blogsInDb())[0]
+    const editedBlog = {
+        ...aBlogAtStart,
+        likes: 99
+    }
+
+    await api
+        .put(`/api/blogs/${aBlogAtStart.id}`)
+        .send(editedBlog)
+        .expect(200)
+
+    const blogsAtEnd = await helper.blogsInDb()
+    const aBlogAtEnd = blogsAtEnd.find(b => b.id === aBlogAtStart.id)
+    expect(aBlogAtEnd.likes).toBe(99)
+})
+
 afterAll(() => {
     mongoose.connection.close()
 })

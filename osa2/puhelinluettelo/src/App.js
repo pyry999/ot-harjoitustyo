@@ -101,6 +101,9 @@ const App = () => {
     setNewName('')
     setNewNumber('')
       })
+      .catch(error => {
+        setMessage(error.response.data)
+      })
     
     }
     else {
@@ -118,23 +121,22 @@ const App = () => {
           })
       }
     }
+  //  console.log(persons)
   }
 
   const removePerson = (id) => {
     if(window.confirm("haluukko poistaa")) {
-    setPersons(persons.filter(n => n.id !== id))
-    setShowAll(persons.filter(n => n.id !== id))
-    setMessage(`removed ${persons.find(n=> n.id===id).name}`)
+   // setPersons(persons.filter(n => n.id !== id))
+    //setShowAll(persons.filter(n => n.id !== id))
+   // setMessage(`removed ${persons.find(n=> n.id===id).name}`)
+   const toDelete = persons.find(n=> n.id===id)
     personService
       .rem(id).then(pers => {
         setPersons(persons.filter(n => n.id !== pers.id))
         setShowAll(persons.filter(n => n.id !== pers.id))
-        setMessage(`removed ${persons.find(n=> n.id===pers.id).name}`)
+        setMessage(`removed ${toDelete.name}`)
       })
-      .catch(error => {
-        alert('already deleted')
-      })
-    
+
     setTimeout(() => {
       setMessage(null)
     }, 5000)
@@ -158,7 +160,7 @@ const App = () => {
 
   return (
     <div>
-      <h1>Phonebook</h1>
+      <h1>Phonbook</h1>
       <Notification message={message}/>
       <Form addPerson={addPerson} handleShown={handleShown} newName={newName} handleNameChange={handleNameChange} newNumber={newNumber} handleNumberChange={handleNumberChange}/>
       <h2>Numbers</h2>
